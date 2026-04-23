@@ -1,0 +1,28 @@
+{
+  "enableDesktopNotifications": true,
+  "noticeDurationMs": 12000,
+  "repeatNotices": 2,
+  "defaultMinutes": 10,
+  "defaultSeconds": 0,
+  "presets": [
+    {
+      "id": "short-break",
+      "name": "Short Break",
+      "minutes": 10,
+      "seconds": 0
+    },
+    {
+      "id": "combat-round",
+      "name": "Combat Pressure",
+      "minutes": 1,
+      "seconds": 0
+    },
+    {
+      "id": "long-rest-watch",
+      "name": "Watch Change",
+      "minutes": 120,
+      "seconds": 0
+    }
+  ],
+  "activeTimers": []
+}
