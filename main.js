@@ -22,7 +22,6 @@ class GameTimersPlugin extends Plugin {
   async onload() {
     await this.loadSettings();
     this.activeTimers = Array.isArray(this.settings.activeTimers) ? this.settings.activeTimers : [];
-    this.views = new Set();
 
     this.registerView(
       VIEW_TYPE_GAME_TIMERS,
@@ -35,13 +34,13 @@ class GameTimersPlugin extends Plugin {
 
     this.addCommand({
       id: "open-game-timers-sidebar",
-      name: "Open Game Timers Sidebar",
+      name: "Open game timers sidebar",
       callback: () => this.activateView()
     });
 
     this.addCommand({
       id: "start-default-timer",
-      name: "Start Default Timer",
+      name: "Start default timer",
       callback: async () => {
         await this.startTimer(
           "Session Timer",
@@ -76,8 +75,6 @@ class GameTimersPlugin extends Plugin {
       window.clearInterval(this.tickHandle);
       this.tickHandle = null;
     }
-
-    this.app.workspace.detachLeavesOfType(VIEW_TYPE_GAME_TIMERS);
   }
 
   async loadSettings() {
@@ -113,16 +110,12 @@ class GameTimersPlugin extends Plugin {
     this.refreshViews();
   }
 
-  registerViewInstance(view) {
-    this.views.add(view);
-  }
-
-  unregisterViewInstance(view) {
-    this.views.delete(view);
-  }
-
   refreshViews() {
-    this.views.forEach((view) => view.render());
+    this.app.workspace.getLeavesOfType(VIEW_TYPE_GAME_TIMERS).forEach((leaf) => {
+      if (leaf.view instanceof GameTimersView) {
+        leaf.view.render();
+      }
+    });
   }
 
   startTicker() {
@@ -454,12 +447,10 @@ class GameTimersView extends ItemView {
   }
 
   async onOpen() {
-    this.plugin.registerViewInstance(this);
     this.render();
   }
 
   async onClose() {
-    this.plugin.unregisterViewInstance(this);
   }
 
   render() {
@@ -864,7 +855,7 @@ class GameTimersSettingTab extends PluginSettingTab {
           });
       });
 
-    containerEl.createEl("h3", { text: "Timer presets" });
+    new Setting(containerEl).setName("Timer presets").setHeading();
     containerEl.createEl("p", {
       cls: "setting-item-description",
       text: "Create named timers you can launch quickly from the sidebar."
