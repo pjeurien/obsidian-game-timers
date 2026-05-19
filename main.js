@@ -1,6 +1,6 @@
 "use strict";
 
-const { ItemView, Notice, Plugin, PluginSettingTab, Setting, setIcon } = require("obsidian");
+const { ItemView, Modal, Notice, Plugin, PluginSettingTab, Setting, setIcon } = require("obsidian");
 
 const VIEW_TYPE_GAME_TIMERS = "game-timers-sidebar";
 
@@ -17,6 +17,161 @@ const DEFAULT_SETTINGS = {
   ],
   activeTimers: []
 };
+
+// ─── Create Timer Modal ──────────────────────────────────────────────────────
+// Lets you configure a game-timer codeblock with name, duration, description,
+// button label, and autostart, then copies the ready-to-paste block.
+
+class CreateTimerModal extends Modal {
+  constructor(app, plugin) {
+    super(app);
+    this.plugin = plugin;
+    this._name = '';
+    this._minutes = plugin.settings.defaultMinutes;
+    this._seconds = plugin.settings.defaultSeconds;
+    this._description = '';
+    this._buttonLabel = '';
+    this._autostart = false;
+  }
+
+  onOpen() {
+    this.modalEl.addClass('game-timers-create-modal');
+    const { contentEl } = this;
+    contentEl.empty();
+
+    contentEl.createEl('h2', { text: 'Create timer codeblock', cls: 'game-timers-modal-title' });
+
+    // Name
+    const nameRow = contentEl.createDiv({ cls: 'game-timers-modal-row' });
+    nameRow.createEl('label', { text: 'Timer name', cls: 'game-timers-modal-label' });
+    const nameInput = nameRow.createEl('input', {
+      type: 'text',
+      cls: 'game-timers-input game-timers-modal-input',
+      placeholder: 'e.g. Combat Round'
+    });
+    nameInput.addEventListener('input', () => {
+      this._name = nameInput.value;
+      this._updatePreview();
+    });
+
+    // Duration
+    const durationRow = contentEl.createDiv({ cls: 'game-timers-modal-row' });
+    durationRow.createEl('label', { text: 'Duration', cls: 'game-timers-modal-label' });
+    const durationGrid = durationRow.createDiv({ cls: 'game-timers-modal-duration-grid' });
+
+    const minWrap = durationGrid.createDiv({ cls: 'game-timers-modal-duration-field' });
+    const minInput = minWrap.createEl('input', {
+      type: 'number',
+      cls: 'game-timers-input',
+      attr: { min: '0', step: '1' }
+    });
+    minInput.value = String(this._minutes);
+    minWrap.createEl('span', { text: 'm', cls: 'game-timers-modal-duration-unit' });
+
+    const secWrap = durationGrid.createDiv({ cls: 'game-timers-modal-duration-field' });
+    const secInput = secWrap.createEl('input', {
+      type: 'number',
+      cls: 'game-timers-input',
+      attr: { min: '0', max: '59', step: '5' }
+    });
+    secInput.value = String(this._seconds);
+    secWrap.createEl('span', { text: 's', cls: 'game-timers-modal-duration-unit' });
+
+    [minInput, secInput].forEach((el) => el.addEventListener('input', () => {
+      this._minutes = Math.max(0, Number(minInput.value) || 0);
+      this._seconds = Math.max(0, Math.min(59, Number(secInput.value) || 0));
+      this._updatePreview();
+    }));
+
+    // Description (optional)
+    const descRow = contentEl.createDiv({ cls: 'game-timers-modal-row' });
+    descRow.createEl('label', { text: 'Description (optional)', cls: 'game-timers-modal-label' });
+    const descInput = descRow.createEl('input', {
+      type: 'text',
+      cls: 'game-timers-input game-timers-modal-input',
+      placeholder: 'Shown below the timer name'
+    });
+    descInput.addEventListener('input', () => {
+      this._description = descInput.value;
+      this._updatePreview();
+    });
+
+    // Button label (optional)
+    const labelRow = contentEl.createDiv({ cls: 'game-timers-modal-row' });
+    labelRow.createEl('label', { text: 'Button label (optional)', cls: 'game-timers-modal-label' });
+    const labelInput = labelRow.createEl('input', {
+      type: 'text',
+      cls: 'game-timers-input game-timers-modal-input',
+      placeholder: 'Default: Start once'
+    });
+    labelInput.addEventListener('input', () => {
+      this._buttonLabel = labelInput.value;
+      this._updatePreview();
+    });
+
+    // Autostart
+    const autostartRow = contentEl.createDiv({ cls: 'game-timers-modal-row game-timers-modal-toggle-row' });
+    autostartRow.createEl('label', { text: 'Auto-start when note opens', cls: 'game-timers-modal-label' });
+    const autostartToggle = autostartRow.createEl('input', {
+      type: 'checkbox',
+      cls: 'game-timers-modal-checkbox'
+    });
+    autostartToggle.addEventListener('change', () => {
+      this._autostart = autostartToggle.checked;
+      this._updatePreview();
+    });
+
+    // Preview
+    contentEl.createDiv({ text: 'Generated codeblock', cls: 'game-timers-modal-section-label' });
+    this._previewEl = contentEl.createEl('pre', { cls: 'game-timers-modal-preview' });
+    this._codeEl = this._previewEl.createEl('code');
+
+    // Copy button
+    const actionsRow = contentEl.createDiv({ cls: 'game-timers-modal-actions' });
+    const copyBtn = actionsRow.createEl('button', {
+      text: 'Copy codeblock',
+      cls: 'game-timers-action-button game-timers-modal-copy-btn'
+    });
+    copyBtn.addEventListener('click', () => {
+      if (!this._name.trim()) {
+        new Notice('Enter a timer name first.');
+        return;
+      }
+      if (this._minutes === 0 && this._seconds === 0) {
+        new Notice('Set a duration longer than 0 seconds.');
+        return;
+      }
+      navigator.clipboard.writeText(this._buildCodeblock());
+      new Notice('Timer codeblock copied!');
+    });
+
+    this._updatePreview();
+    nameInput.focus();
+  }
+
+  _buildCodeblock() {
+    const lines = [`name: ${this._name.trim() || 'Session Timer'}`];
+    if (this._minutes > 0) lines.push(`minutes: ${this._minutes}`);
+    if (this._seconds > 0) lines.push(`seconds: ${this._seconds}`);
+    if (this._description.trim()) lines.push(`description: ${this._description.trim()}`);
+    if (this._buttonLabel.trim()) lines.push(`button: ${this._buttonLabel.trim()}`);
+    if (this._autostart) lines.push('autostart: true');
+    return `\`\`\`game-timer\n${lines.join('\n')}\n\`\`\``;
+  }
+
+  _updatePreview() {
+    if (!this._codeEl) return;
+    if (!this._name.trim()) {
+      this._codeEl.textContent = '(enter a timer name to generate the codeblock)';
+      return;
+    }
+    this._codeEl.textContent = this._buildCodeblock();
+  }
+
+  onClose() {
+    this.contentEl.empty();
+  }
+}
 
 class GameTimersPlugin extends Plugin {
   async onload() {
@@ -425,6 +580,10 @@ class GameTimersPlugin extends Plugin {
     const remaining = Math.max(0, nextTimer.endsAt - Date.now());
     this.statusBar.setText(`${nextTimer.name}: ${formatRemaining(remaining)}`);
   }
+
+  openTimerCreator() {
+    new CreateTimerModal(this.app, this).open();
+  }
 }
 
 class GameTimersView extends ItemView {
@@ -545,6 +704,12 @@ class GameTimersView extends ItemView {
       text: "Start continuously"
     });
     startContinuousButton.addEventListener("click", async () => this.startTimerFromForm(true));
+
+    const createCodeblockBtn = createSection.createEl("button", {
+      cls: "game-timers-action-button game-timers-create-codeblock-btn",
+      text: "Create timer codeblock"
+    });
+    createCodeblockBtn.addEventListener("click", () => this.plugin.openTimerCreator());
 
     this.bodyEl = wrapper.createDiv({ cls: "game-timers-body" });
 
