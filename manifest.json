@@ -1,7 +1,7 @@
 {
     "id":  "game-timers",
     "name":  "Game Timers",
-    "version":  "1.0.5",
+    "version":  "1.1.0",
     "minAppVersion":  "1.6.0",
     "description":  "Create countdown timers and get a notification when time is up.",
     "author":  "Patriek Jeuriens",

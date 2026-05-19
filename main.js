@@ -637,6 +637,13 @@ class GameTimersView extends ItemView {
       text: "Keep pressure on the table with quick countdowns.",
       cls: "game-timers-subtitle"
     });
+    const createTimerBtn = titleRow.createEl("button", {
+      cls: "game-timers-create-timer-btn",
+      type: "button",
+      text: "Create Timer"
+    });
+    createTimerBtn.addEventListener("click", () => this.plugin.openTimerCreator());
+
     const settingsButton = titleRow.createEl("button", {
       cls: "game-timers-cog-btn",
       type: "button",
@@ -664,6 +671,7 @@ class GameTimersView extends ItemView {
     sessionAlertButton.addEventListener("click", async () => this.startSessionEndAlert());
 
     const createSection = toolbar.createDiv({ cls: "game-timers-create" });
+    createSection.createEl("div", { text: "Quick timer", cls: "game-timers-create-heading" });
 
     this.nameInput = createSection.createEl("input", {
       cls: "game-timers-input",
@@ -704,12 +712,6 @@ class GameTimersView extends ItemView {
       text: "Start continuously"
     });
     startContinuousButton.addEventListener("click", async () => this.startTimerFromForm(true));
-
-    const createCodeblockBtn = createSection.createEl("button", {
-      cls: "game-timers-action-button game-timers-create-codeblock-btn",
-      text: "Create timer codeblock"
-    });
-    createCodeblockBtn.addEventListener("click", () => this.plugin.openTimerCreator());
 
     this.bodyEl = wrapper.createDiv({ cls: "game-timers-body" });
 
