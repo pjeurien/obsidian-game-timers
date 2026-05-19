@@ -17,9 +17,17 @@
 }
 
 .game-timers-title-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.game-timers-title-text {
+  flex: 1;
+  min-width: 0;
   display: grid;
   gap: 2px;
-  margin-bottom: 10px;
 }
 
 .game-timers-title {
@@ -33,6 +41,120 @@
 .game-timers-subtitle {
   font-size: 0.9em;
   color: var(--text-faint);
+}
+
+.game-timers-cog-btn {
+  flex: 0 0 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  min-width: 28px;
+  max-width: 28px;
+  height: 28px;
+  padding: 6px;
+  border: none;
+  border-radius: 4px;
+  background: var(--interactive-normal);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.game-timers-cog-btn:hover {
+  background: var(--interactive-hover);
+  color: var(--text-normal);
+}
+
+.game-timers-cog-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.game-timers-session-alert {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  gap: 8px;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.game-timers-session-alert .game-timers-action-button {
+  width: auto;
+  min-width: 130px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.game-timers-session-alert .game-timers-action-button:hover {
+  background: var(--interactive-accent-hover);
+}
+
+.game-timers-clock-selectors {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 4px;
+}
+
+.game-timers-custom-select {
+  position: relative;
+}
+
+.game-timers-custom-select-trigger {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 4px 8px;
+  font-size: 0.9em;
+  text-align: center;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: var(--background-primary);
+  color: var(--text-normal);
+  cursor: pointer;
+}
+
+.game-timers-custom-select-trigger:hover,
+.game-timers-custom-select-trigger:focus {
+  outline: none;
+  border-color: var(--background-modifier-border-hover);
+}
+
+.game-timers-custom-select-list {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  max-height: 180px;
+  overflow-y: auto;
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.game-timers-custom-select-option {
+  padding: 4px 8px;
+  font-size: 0.9em;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text-normal);
+}
+
+.game-timers-custom-select-option:hover {
+  background: color-mix(in srgb, var(--interactive-accent) 20%, transparent);
+}
+
+.game-timers-custom-select-option.is-selected {
+  color: var(--interactive-accent);
+  font-weight: 600;
+}
+
+.game-timers-clock-separator {
+  color: var(--text-muted);
+  font-weight: 600;
 }
 
 .game-timers-create {
@@ -59,8 +181,16 @@
   gap: 8px;
 }
 
+.game-timers-button-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
 .game-timers-input,
-.game-timers-shell button {
+.game-timers-action-button,
+.game-timers-row-button,
+.game-timers-codeblock-button {
   width: 100%;
 }
 
@@ -74,6 +204,10 @@
   color: var(--text-normal);
 }
 
+.game-timers-input:hover {
+  border-color: var(--interactive-accent);
+}
+
 .game-timers-input:focus {
   outline: none;
   border-color: var(--interactive-accent);
@@ -81,44 +215,34 @@
 
 .game-timers-action-button,
 .game-timers-row-button,
-.game-timers-footer-btn {
+.game-timers-codeblock-button {
   cursor: pointer;
   border: none;
   border-radius: 4px;
   padding: 6px 10px;
-}
-
-.game-timers-action-button {
-  background: var(--interactive-accent);
-  color: var(--text-on-accent);
-}
-
-.game-timers-action-button:hover,
-.game-timers-footer-btn.mod-cta:hover {
-  background: var(--interactive-accent-hover);
-}
-
-.game-timers-footer-btn.mod-cta {
-  background: var(--interactive-accent);
-  color: var(--text-on-accent);
+  min-width: 0;
+  line-height: 1.2;
+  white-space: normal;
 }
 
 .game-timers-row-button,
-.game-timers-footer-btn {
+.game-timers-action-button,
+.game-timers-codeblock-button {
   background: var(--interactive-normal);
   color: var(--text-normal);
 }
 
+.game-timers-action-button:hover,
 .game-timers-row-button:hover,
-.game-timers-footer-btn:hover:not(:disabled) {
+.game-timers-codeblock-button:hover {
   background: var(--interactive-hover);
 }
 
-.game-timers-time {
-  font-size: 1.4rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  color: var(--text-accent);
+.game-timers-action-button:disabled,
+.game-timers-row-button:disabled,
+.game-timers-codeblock-button:disabled {
+  cursor: default;
+  opacity: 0.55;
 }
 
 .game-timers-body {
@@ -153,12 +277,17 @@
   color: var(--text-faint);
 }
 
-.game-timers-list-row,
-.game-timers-active-card {
+.game-timers-list-row {
   padding: 8px 12px;
   border-bottom: 1px solid var(--background-modifier-border);
   display: grid;
   gap: 8px;
+  border-left: 3px solid transparent;
+}
+
+.game-timers-list-row[style*="--game-timer-color"] {
+  border-left-color: var(--game-timer-color);
+  background: var(--game-timer-color-bg);
 }
 
 .game-timers-list-details {
@@ -172,10 +301,88 @@
   color: var(--text-normal);
 }
 
+.game-timers-list-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.game-timers-color-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--game-timer-color, var(--text-faint));
+  flex: 0 0 auto;
+}
+
 .game-timers-settings .game-timers-preset-editor {
   border: 1px solid var(--background-modifier-border);
   border-radius: 10px;
   margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.game-timers-preset-fields {
+  display: grid;
+  grid-template-columns: minmax(140px, 2fr) minmax(70px, 1fr) minmax(70px, 1fr) minmax(150px, 2fr) minmax(110px, 1fr);
+  gap: 10px;
+  padding: 0 12px;
+}
+
+.game-timers-preset-field {
+  display: grid;
+  gap: 4px;
+}
+
+.game-timers-preset-field label {
+  font-size: 0.72em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.game-timers-settings-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.game-timers-color-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.game-timers-color-input {
+  width: 34px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 4px;
+  background: transparent;
+}
+
+.game-timers-color-clear {
+  flex: 1;
+  min-width: 0;
+  height: 28px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  background: var(--interactive-normal);
+  color: var(--text-normal);
+  cursor: pointer;
+}
+
+.game-timers-color-clear:hover {
+  background: var(--interactive-hover);
+}
+
+@media (max-width: 640px) {
+  .game-timers-preset-fields {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .game-timers-status {
@@ -221,35 +428,127 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--text-muted);
+  margin-bottom: 6px;
 }
 
-.game-timers-footer-track {
-  margin-top: 4px;
-  font-size: 0.9em;
+.game-timers-running-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.game-timers-running-empty {
+  font-size: 0.82em;
   color: var(--text-faint);
-  white-space: nowrap;
+}
+
+.game-timers-running-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  border-left: 3px solid transparent;
+}
+
+.game-timers-running-row[style*="--game-timer-color"] {
+  border-left-color: var(--game-timer-color);
+  background: var(--game-timer-color-bg);
+}
+
+.game-timers-running-0 {
+  border-left-color: #4caf50;
+  background: rgba(76, 175, 80, 0.08);
+}
+
+.game-timers-running-1 {
+  border-left-color: #ffc107;
+  background: rgba(255, 193, 7, 0.08);
+}
+
+.game-timers-running-2 {
+  border-left-color: #2196f3;
+  background: rgba(33, 150, 243, 0.08);
+}
+
+.game-timers-running-row[style*="--game-timer-color"].game-timers-running-0,
+.game-timers-running-row[style*="--game-timer-color"].game-timers-running-1,
+.game-timers-running-row[style*="--game-timer-color"].game-timers-running-2 {
+  border-left-color: var(--game-timer-color);
+  background: var(--game-timer-color-bg);
+}
+
+.game-timers-running-paused {
+  opacity: 0.72;
+}
+
+.game-timers-running-time {
+  font-size: 0.78em;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 46px;
+  flex-shrink: 0;
+}
+
+.game-timers-running-name {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.game-timers-footer-active .game-timers-footer-track {
+  white-space: nowrap;
+  font-size: 0.82em;
   color: var(--text-normal);
 }
 
-.game-timers-footer-meta,
+.game-timers-running-badge {
+  padding: 1px 4px;
+  border-radius: 3px;
+  background: var(--background-modifier-hover);
+  color: var(--text-muted);
+  font-size: 0.68em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.game-timers-running-controls {
+  display: flex;
+  gap: 1px;
+  flex-shrink: 0;
+}
+
+.game-timers-running-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.game-timers-running-btn:hover {
+  background: var(--background-modifier-hover);
+}
+
+.game-timers-running-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.game-timers-running-0 .game-timers-running-btn:hover { color: #4caf50; }
+.game-timers-running-1 .game-timers-running-btn:hover { color: #ffc107; }
+.game-timers-running-2 .game-timers-running-btn:hover { color: #2196f3; }
+.game-timers-running-row[style*="--game-timer-color"] .game-timers-running-btn:hover { color: var(--game-timer-color); }
+
 .game-timers-muted {
   margin-top: 3px;
   font-size: 0.78em;
   color: var(--text-muted);
-}
-
-.game-timers-footer-controls {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.game-timers-footer-btn:disabled {
-  cursor: default;
-  opacity: 0.55;
 }

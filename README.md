@@ -4,14 +4,19 @@ An Obsidian plugin for DM-facing countdown timers in a dedicated sidebar.
 
 ## Features
 
-- Dedicated sidebar for creating and monitoring countdown timers
+- Dedicated sidebar for creating and monitoring multiple countdown timers at once
 - Quick custom timers with configurable default minutes and seconds
 - Reusable presets managed from plugin settings
 - Active timers persist across Obsidian reloads
+- Timers can run once or continuously repeat until cancelled
+- Running timers can be paused, resumed, or removed from the footer
+- Presets can define optional warning times such as `1m, 30s`
+- Presets can define an optional color used in the preset list and running timer footer
 - Obsidian notices when a timer finishes
 - Optional desktop notifications
 - `game-timer` markdown code blocks for launching timers directly from notes
 - Status bar summary for the next timer to expire
+- Audio-sidebar-style running timers footer with quick cancel controls
 
 ## Usage
 
@@ -25,11 +30,12 @@ Open the sidebar from any of these entry points:
 
 From the sidebar you can:
 
-1. Enter a timer name
-2. Set minutes and seconds
-3. Click **Start Timer**
+1. Set a session ending clock time and click **Set session alert**
+2. Enter a timer name
+3. Set minutes and seconds
+4. Click **Start once** or **Start continuously**
 
-You can also start any saved preset with one click and cancel active timers from the same panel.
+You can also start any saved preset as a one-shot or continuous timer and cancel active timers from the same panel. Multiple timers can run together, and the footer stays pinned to show the full running timer list.
 
 ### Code Block
 
@@ -74,6 +80,8 @@ Under **Settings -> Community Plugins -> Game Timers** you can configure:
 - Default minutes
 - Default seconds
 - Timer presets
+
+Preset warnings are optional. Leave the warnings field empty for a silent preset, or enter comma-separated remaining times such as `5m, 1m, 30s`.
 
 ## Installation
 

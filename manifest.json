@@ -1,10 +1,9 @@
 {
-  "id": "game-timers",
-  "name": "Game Timers",
-  "version": "1.0.0",
-  "minAppVersion": "1.5.0",
-  "description": "Create countdown timers for your sessions and notify the DM when time is up.",
-  "author": "OpenAI Codex",
-  "authorUrl": "https://openai.com",
-  "isDesktopOnly": false
+    "id":  "game-timers",
+    "name":  "Game Timers",
+    "version":  "1.0.2",
+    "minAppVersion":  "1.6.0",
+    "description":  "Create countdown timers and get a notification when time is up.",
+    "author":  "Patriek Jeuriens",
+    "isDesktopOnly":  false
 }
